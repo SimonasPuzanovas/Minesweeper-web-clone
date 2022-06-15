@@ -1,0 +1,114 @@
+.tile-container{
+    display: none;
+    position: absolute;
+    background: #c0c0c0;
+    border: 2px inset white;
+    max-width: 700px;
+    max-height: 700px;
+    flex-wrap: wrap;
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
+.tile-container-background{
+    position: absolute;
+    /*background: #c0c0c0;*/
+    background: rgb(220, 220, 220);
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    top: 0;
+    left: 0;
+}
+
+.reset-game{
+    position: absolute;
+    display: flex;
+    left: 5px;
+    width: 200px;
+    height: 50px;
+    background: rgb(200, 200, 200);
+    top: 4px;
+    outline: 3px outset white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: black;
+    transition: all 0.3s;
+    z-index: -100;
+}
+
+.mine-clicker{
+    position: absolute;
+    display: flex;
+    font-size: 15px;
+    bottom: 0px;
+    width: 90%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 50px;
+    background: rgb(200, 200, 200);
+    outline: 3px outset white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    transition: all 0.3s;
+    z-index: -100;
+}
+
+.cell{
+    cursor:pointer;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    transition-property: outline-color;
+    transition-duration: 0.2s;
+    background-size: 100% 100%;
+    image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+    image-rendering: -moz-crisp-edges;          /* Firefox                        */
+    image-rendering: -o-crisp-edges;            /* Opera                          */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+    image-rendering: pixelated; /* Chrome */
+    image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+    -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+}
+
+.cell-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: #c0c0c0;
+    transition: all 1;
+    opacity: 0.3;
+}
+
+.cell-background:hover{
+}
+
+.cell-overlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    transition: all 0.5s;
+}
+
+.tile-unknown{background-image: url("images/tile-unknown.png");}
+.tile-mine{background-image: url("images/tile-mine.png");}
+.tile-unsolvedmine{background-image: url("images/tile-unsolvedmine.png");}
+.tile-solvedmine{background-image: url("images/tile-solvedmine.png");}
+.tile-flag{background-image: url("images/tile-flag.png");}
+.tile-0{background-image: url("images/tile0.png");}
+.tile-1{background-image: url("images/tile1.png");}
+.tile-2{background-image: url("images/tile2.png");}
+.tile-3{background-image: url("images/tile3.png");}
+.tile-4{background-image: url("images/tile4.png");}
+.tile-5{background-image: url("images/tile5.png");}
+.tile-6{background-image: url("images/tile6.png");}
+.tile-7{background-image: url("images/tile7.png");}
+.tile-8{background-image: url("images/tile8.png");}
