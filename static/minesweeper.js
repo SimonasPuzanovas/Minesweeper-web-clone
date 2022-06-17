@@ -115,6 +115,10 @@ function cell_color_fill(x, y, color){
                 cell_background.style.opacity = 1;
             }
 
+            else if (cell.classList.item(2) == "tile-solvedmine"){
+                cell_background.style.opacity = 1;
+            }
+
             else if (cell.classList.item(2) == "tile-0" && !has(array, [stack_tmp[i][0], stack_tmp[i][1]])){
                 cell_background.style.opacity = 0.2;
 

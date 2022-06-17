@@ -23,6 +23,7 @@ pub struct Minesweeper{
     pub bombs: u8,
     pub gameover: bool,
     pub started: bool,
+    pub color_fill_vector: Vec<String>,
 }
 
 
@@ -64,6 +65,7 @@ impl Minesweeper{
             map_size: map_size,
             bombs: bombs,
             started: false,
+            color_fill_vector: Vec::new(),
         }
     }
 
@@ -95,6 +97,9 @@ impl Minesweeper{
     }
 
     pub fn reset(&mut self){
+        //reset color filling
+        self.color_fill_vector = Vec::new();
+
         //adding 0's depending on the size of the map
         for y in 0..self.map_size{
             for x in 0..self.map_size{

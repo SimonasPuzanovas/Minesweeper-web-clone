@@ -22,12 +22,6 @@ impl Games{
         }
     }
 
-    fn send_color_fill_vector_data(&mut self, vector: Vec<String>, addr: Addr<MyWs>){
-        for color_data in vector{
-            addr.do_send(ServerMsg{data: color_data.to_string()}); 
-        }
-    }
-
 
     fn update_playerlist(&mut self, idx: usize){
 
@@ -165,9 +159,7 @@ impl Handler<Kick> for Games{
     type Result = ();
 
     fn handle(&mut self, msg: Kick, _ctx: &mut Context<Self>){
-
         let mut idx = 0;
-
         for game in &mut self.game_list{
             if msg.gameid == game.0 && msg.username == game.1.sessions[0].name{
                 let mut idxx = 0;
@@ -212,10 +204,6 @@ impl Handler<PlaceFlag> for Games{
                 if result{
                     for session in &game.1.sessions{
                         if session.name == msg.name{
-
-                            game.1.color_fill_vector.push(
-                                format!("/moved {} {} {}", msg.x, msg.y, session.color));
-
                             for sessionn in &game.1.sessions{
                                 sessionn.addr.do_send(ServerMsg{data: game.1.get_flags()});
                                 sessionn.addr.do_send(ServerMsg{
@@ -337,7 +325,6 @@ impl Handler<MakeMove> for Games{
     type Result = ();
 
     fn handle(&mut self, msg: MakeMove, _ctx: &mut Context<Self>){
-
         for game in &mut self.game_list{
             if game.0 == msg.gameid && !game.1.is_flag(msg.x.clone(), msg.y.clone()){
                 for session in game.1.sessions.clone(){
@@ -345,10 +332,6 @@ impl Handler<MakeMove> for Games{
 
                         let result = game.1.step_on(msg.x, msg.y);
                         if result == "moved"{
-
-                            game.1.color_fill_vector.push(
-                                format!("/moved {} {} {}", msg.x, msg.y, session.color));
-
                             for sessionn in &game.1.sessions{
                                 sessionn.addr.do_send(ServerMsg{data: game.1.get_game_state()});
                                 sessionn.addr.do_send(ServerMsg{
@@ -358,17 +341,12 @@ impl Handler<MakeMove> for Games{
                         }
 
                         else if result == "mine"{
-
-                            game.1.color_fill_vector.push(
-                                format!("/moved {} {} {}", msg.x, msg.y, session.color));
-
                             for sessionn in &game.1.sessions{
                                 sessionn.addr.do_send(ServerMsg{data: game.1.get_game_state()});
                                 sessionn.addr.do_send(ServerMsg{
                                     data: format!("/moved {} {} {}", msg.x, msg.y, session.color)
                                 });
-                                sessionn.addr.do_send(ServerMsg{
-                                    data: format!("/gameover {}", msg.username)});
+                                sessionn.addr.do_send(ServerMsg{data: format!("/gameover {}", msg.username)});
                             }
                         }
 
@@ -407,12 +385,9 @@ impl Handler<ConnectToGame> for Games{
         let mut idx = 0;
         for game in &mut self.game_list{
             if game.0 == msg.gameid && game.1.sessions.len() < game.1.maxplayers as usize{
-
                 let color = game.1.gen_color();
-                let color_fill_vector = game.1.color_fill_vector.clone();
-
                 game.1.sessions.push(Player {
-                    name: msg.username.clone(),
+                    name: msg.username,
                     color: color,
                     addr: msg.addr.clone(),
                     ready: false,
@@ -424,7 +399,6 @@ impl Handler<ConnectToGame> for Games{
                     data: format!("/joinedroom {}", game.1.map_size).to_string()});
                 msg.addr.do_send(ServerMsg{data: game.1.get_game_state()});
 
-
                 if game.1.gameover{
                     msg.addr.do_send(ServerMsg{data: "/gameover".to_string()});
                 }
@@ -433,8 +407,6 @@ impl Handler<ConnectToGame> for Games{
                 }
                 self.update_rooms();
                 self.update_playerlist(idx);
-
-                self.send_color_fill_vector_data(color_fill_vector, msg.addr.clone());
                 return Ok("connected".to_string());
             }
             idx += 1;
