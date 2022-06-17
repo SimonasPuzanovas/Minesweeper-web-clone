@@ -22,6 +22,7 @@ pub struct Minesweeper{
     pub map_size: usize,
     pub bombs: u8,
     pub gameover: bool,
+    pub gamewin: bool,
     pub started: bool,
     pub color_fill_vector: Vec<String>,
 }
@@ -61,6 +62,7 @@ impl Minesweeper{
             sessions: Vec::new(),
             maxplayers: maxplayers,
             gameover: false,
+            gamewin: false,
             vision: vision,
             map_size: map_size,
             bombs: bombs,
@@ -126,13 +128,14 @@ impl Minesweeper{
             session.flags.clear(); 
         }
         self.gameover = false;
+        self.gamewin = false;
     }
 
     pub fn place_flag(&mut self, x: usize, y: usize, name: String) -> bool{
 
         //if there is a flag then remove it and return
         //so that the flag wouldnt add up again
-        if !self.gameover && self.vision[y][x] == 9{
+        if !self.gameover && !self.gamewin && self.vision[y][x] == 9{
             for session in &mut self.sessions{
                 let mut idx = 0;
                 for flag in session.flags.clone(){
@@ -174,7 +177,7 @@ impl Minesweeper{
         //moved (made legit move game goes on)
         //mine (clicked on mine)
         //not moving (clicked on known cell)
-        if self.vision[y][x] == 9 && !self.gameover{
+        if self.vision[y][x] == 9 && !self.gameover && !self.gamewin{
 
             //if it's a mine
             if self.map[y][x] == 1 {
@@ -244,6 +247,22 @@ impl Minesweeper{
                     if !removed {idx += 1;}
                 }
             }
+
+            let mut gamewin = true;
+
+            for y in 0..self.map_size{
+                for x in 0..self.map_size{
+                    if self.map[y][x] == 0 && self.vision[y][x] == 9{
+                        gamewin = false;            
+                    }
+                }
+            }
+
+            if gamewin {
+                self.gamewin = true;
+                return "gamewin";
+            }
+
             return "moved";
         }
         return "not moving";

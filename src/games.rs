@@ -149,7 +149,7 @@ impl Handler<ChangeColor> for Games{
                 let color = game.1.gen_color();
 
                 for session in &mut game.1.sessions{
-                    if session.name == msg.username && game.1.gameover{
+                    if session.name == msg.username && game.1.gameover || game.1.gamewin{
                         session.color = color;
                         self.update_playerlist(idx);
                         return
@@ -238,7 +238,7 @@ impl Handler<ResetGame> for Games{
     fn handle(&mut self, msg: ResetGame, _ctx: &mut Context<Self>){
         for game in &mut self.game_list{
             if game.0 == msg.gameid{
-                if game.1.gameover{
+                if game.1.gameover || game.1.gamewin{
                     game.1.reset();
                     for session in &game.1.sessions{
                         session.addr.do_send(ServerMsg{data: "/resetgame".to_string()});
@@ -365,20 +365,20 @@ impl Handler<MakeMove> for Games{
                             for sessionn in &game.1.sessions{
                                 sessionn.addr.do_send(ServerMsg{data: game.1.get_game_state()});
                                 sessionn.addr.do_send(ServerMsg{
-                                    data: format!("/moved {} {} {}", msg.x, msg.y, session.color)
-                                });
+                                    data: format!("/moved {} {} {}", msg.x, msg.y, session.color)});
                                 sessionn.addr.do_send(ServerMsg{
                                     data: format!("/gameover {}", msg.username)});
                             }
                         }
 
-                        //TODO: gamewin event
-                        //else if result == "win"{
-                        //    for sessionn in &game.1.sessions{
-                        //        sessionn.addr.do_send(ServerMsg{data: game.1.get_game_state()});
-                        //        sessionn.addr.do_send(ServerMsg{data: "/gamewin".to_string()});
-                        //    }
-                        //}
+                        else if result == "gamewin"{
+                            for sessionn in &game.1.sessions{
+                                sessionn.addr.do_send(ServerMsg{data: game.1.get_game_state()});
+                                sessionn.addr.do_send(ServerMsg{data: "/gamewin".to_string()});
+                                sessionn.addr.do_send(ServerMsg{
+                                    data: format!("/moved {} {} {}", msg.x, msg.y, session.color)});
+                            }
+                        }
                     }
                 }
             }
@@ -428,9 +428,16 @@ impl Handler<ConnectToGame> for Games{
                 if game.1.gameover{
                     msg.addr.do_send(ServerMsg{data: "/gameover".to_string()});
                 }
+
+                else if game.1.gamewin{
+                    msg.addr.do_send(ServerMsg{data: "/gamewin".to_string()});
+                    msg.addr.do_send(ServerMsg{data: game.1.get_flags()});
+                }
+
                 else{
                     msg.addr.do_send(ServerMsg{data: game.1.get_flags()});
                 }
+
                 self.update_rooms();
                 self.update_playerlist(idx);
 

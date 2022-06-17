@@ -198,6 +198,13 @@
                 mine_clicker.style.transform = "translate(-50%, 100%)";
             }
 
+            else if (data[0] == "/gamewin"){
+                reset_game.style.transform = "TranslateY(-100%)";
+
+                mine_clicker_text.textContent = "GAMEWIN";
+                mine_clicker.style.transform = "translate(-50%, 100%)";
+            }
+
             else if (data[0] == "/playernum"){
                 const players = document.querySelector(".playerlist-header-num");
                 players.innerText = data[1]; 
